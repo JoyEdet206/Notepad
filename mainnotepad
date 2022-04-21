@@ -1,0 +1,349 @@
+from tkinter import *
+from tkinter import filedialog
+from tkinter.filedialog import *
+from PIL import ImageTk, Image
+from tkinter.filedialog import *
+import os
+from tkinter.messagebox import *
+from tkinter import colorchooser, font
+from tkinter import colorchooser
+
+
+
+
+notes = Tk()
+#notes.geometry('600x600')
+notes.title('NotePad')
+notes.config(bg='#ADD8E6')
+notes.resizable(True,True)
+notes.iconphoto(False, PhotoImage(file = 'C:\\Users\\hp\\Pictures\\notes.png'))
+#notes.pack(expand=True, fill='both')
+
+file = None
+
+notes_width= 600
+notes_height= 600
+screen_width = notes.winfo_screenwidth()
+screen_height = notes.winfo_screenheight()
+
+x = int((screen_width / 2) - (notes_width / 2))
+y = int((screen_height / 2) - (notes_height/ 2))
+
+notes.geometry('{}x{}+{}+{}'. format(notes_width, notes_height, x, y))
+
+font_name = StringVar(notes)
+font_name.set('Arial')
+
+font_size = StringVar(notes)
+font_size.set('25')
+
+def change_color():
+    color = colorchooser.askcolor(title='pick a color......or else')
+    text_area.config(fg=color[1])
+
+def change_font(*args):
+    text_area.config(font=(font_name.get(), size_box.get()))
+
+def cut():
+    text_area.event_generate('<<Cut>>')
+
+def copy():
+    text_area.event_generate('<<Copy>>')
+
+def paste():
+   text_area.event_generate('<<Paste>>')
+
+def about():
+    showinfo('About JoyPad!', 'This is a program written by YOUUUUU!, yes you!. To learn more about notepad, visit the site ')
+
+def quit():
+    notes.destroy()
+
+#def save_file():
+#    save = filedialog.asksaveasfile(mode='w', defaultextension='.txt')
+    #if open_file is None:
+    #    return
+#    save = str(entry.get(1.0, END))
+#    file.write(text)
+#    file.close()
+
+#def open_file():
+#    file = filedialog.askopenfile(mode='r', filetype = [('text files', '*txt')])
+#    if file is not None:
+#       content = file.read()
+#    entry.insert(INSERT, content)
+
+
+#frame = Frame(notes, height='33', width='72')
+#frame.pack(expand=True, fill='both')
+
+frame = Frame(notes)
+frame.place(height=25, width=542, relx=.5, rely=0.94, anchor = CENTER)
+#0.05, 0.92
+
+
+color_button = Button(frame, text='color',  command=change_color)
+color_button.grid(row=0, column=0)
+
+font_box = OptionMenu(frame, font_name, *font.families(), command=change_font)
+font_box.grid(row=0, column=1)
+
+size_box = Spinbox(frame, from_=1, to=100, textvariable=font_size, command=change_font)
+size_box.grid(row=0, column=2)
+
+
+
+text_area= Text(notes, height='33', width='72', wrap=WORD)
+#entry.place(x=10,y=60)
+text_area.place(relwidth=.9, relheight=.8, relx=.2 , rely =.2)
+#entry.pack(expand=True)
+#entry.pack(side=LEFT, expand=True, fill='both')
+#entry.grid(sticky = N + E +S + W)
+#text_area.place(relx=0.5, rely=0.5, anchor=CENTER)
+
+button_mode = True
+
+def customize():
+
+    global button_mode
+
+    if button_mode:
+        button.config(image=off1, bd=0) #, bg='#26242f', activebackground='#26242f')
+        text_area.config(bg='#26242f')
+        button_mode = False
+
+    else:
+        button.config(image=on1, bd=0) #, bg='white', activebackground='white')
+        text_area.config(bg='white')
+        button_mode = True
+
+on=Image.open('C:\\Users\\hp\\Pictures\\light.png')
+resized = on.resize((50, 50))
+on1 = ImageTk.PhotoImage(resized)
+
+off=Image.open('C:\\Users\\hp\\Pictures\\dark.png')
+resized = off.resize((50, 50))
+off1 = ImageTk.PhotoImage(resized)
+
+button = Button(notes, image=on1, bd=0, command=customize, bg='#ADD8E6') #, bg='white',
+button.place(relx=.0535, rely=.025, anchor=NW, height=40, width=40)
+
+
+scroll_bar = Scrollbar(text_area)
+#notes.grid_rowconfigure(0, weight=1)
+#notes.grid_columnconfigure(0, weight=1)
+#text_area.grid(sticky= N + E + S + W)
+
+scroll_bar.pack(side=RIGHT, fill=Y)
+text_area.config(yscrollcommand=scroll_bar.set, undo=True)
+
+scroll_bar.config(command=text_area.yview)
+#text_area.pack(expand=1, fill=BOTH)
+text_area.place(relx=0.5, rely=0.5, anchor=CENTER)
+
+menubar = Menu(notes)
+notes.config(menu=menubar)
+
+new_file = Image.open('C:\\Users\\hp\\Pictures\\new1.png')
+resized = new_file.resize((25, 25))
+check_new1 = ImageTk.PhotoImage(resized)
+
+open_file = Image.open('C:\\Users\\hp\\Pictures\\open1.png')
+resized = open_file.resize((25, 25))
+check_new2 = ImageTk.PhotoImage(resized)
+
+save_file = Image.open('C:\\Users\\hp\\Pictures\\save1.png')
+resized = save_file.resize((25, 25))
+check_new3 = ImageTk.PhotoImage(resized)
+
+exit_file = Image.open('C:\\Users\\hp\\Pictures\\exit.png')
+resized = exit_file.resize((25, 25))
+check_new4 = ImageTk.PhotoImage(resized)
+
+global open_status_name
+open_status_name = False
+
+def new_file():
+    notes.title('Untitled')
+    text_area.delete(1.0, END)
+    status_bar.config(text='New File                 ')
+
+    global open_status_name
+    open_status_name = False
+
+def open_file():
+    print('File is opening......')
+    file = askopenfilename(initialdir='C:\\Users\\hp\\PycharmProjects\\FlaskApplication\\myfile.txt',
+                           title='Open Document',
+                           defaultextension='.txt', file=[('All Files', '*.*'),
+                                                          ('Text Documents', '*.txt'),
+                                                          ('HTML files', '.html'),
+                                                          ('All files', '.*'),
+                                                          ('PDF Files', '.pdf'),
+                                                          ('Word Files', '.docx')])
+
+    try:
+        if file is not None:
+            
+
+            global open_status_name
+            open_status_name = file
+
+            #file = filee
+
+            name = file
+            status_bar.config(text=f'{name}       ')
+            name = name.replace('C:/gui/', '')
+              
+            notes.title(os.path.basename(file))
+            text_area.delete(1.0, END)
+
+            filee = open(file, 'r')
+
+            text_area.insert(1.0, filee.read())
+            filee.close()
+
+    except Exception:
+            print("couldn't open file")
+
+    #finally:
+            #global filee
+            #filee.close()
+
+def saveas_file():
+    file = filedialog.asksaveasfilename(initialfile='untitled.txt',
+                                        defaultextension='.txt',
+                                        filetypes=[('All Files', '*.*'),
+                                                   ('Text Documents', '*.txt'),
+                                                   ('HTML files', '.html'),
+                                                   ('All files', '.*'),
+                                                   ('PDF Files', '.pdf'),
+                                                   ('Word Files', '.docx')])
+
+    if file is None:
+        return
+
+    else:
+
+        try:
+
+          global open_status_name
+          open_status_name = file
+
+          name = file
+          status_bar.config(text=f'Saved: {name} ..................')
+          name = name.replace('C:/gui/', '')
+
+          notes.title(os.path.basename(file))
+          filee = open(file, 'w')
+
+        #with open(file, 'w') as file:
+        #       file.write(str(file))
+
+          filee.write(text_area.get(1.0, END))
+
+        except Exception:
+            print("Couldn't save file")
+
+      #  finally:
+      #      global filee
+      #      filee.close()
+
+
+def save_file():
+    
+    global open_status_name
+    if open_status_name:
+        file = open(open_status_name, 'w')
+        file.write(text_area.get(1.0, END))
+        file.close()
+
+        #put pop up code here
+        showinfo('File Saved', 'Your file was saved to a directory')
+                 
+
+        status_bar.config(text=f'Saved: {open_status_name}.........')
+    else:
+         saveas_file()
+
+check1 = Image.open('C:\\Users\\hp\\Pictures\\check1.png')
+
+resized = check1.resize((40, 40))
+check_new = ImageTk.PhotoImage(resized)
+
+b1 = Button(notes, image = check_new, border = 0, text='save file', command=save_file).place(relx= .87, rely = .02) 
+
+fileMenu = Menu(menubar, tearoff=0, font=('MV Boli', 15))
+menubar.add_cascade(label='File', menu=fileMenu)
+fileMenu.add_command(label='New',command=new_file, image = check_new1, compound = 'left')
+#fileMenu.add_separator()
+fileMenu.add_command(label='Open', image = check_new2, compound = 'left', command=open_file)
+#fileMenu.add_separator()
+fileMenu.add_command(label='Save As', image = check_new3,  compound = 'left', command=saveas_file)
+#fileMenu.add_separator()
+fileMenu.add_command(label='Exit', image = check_new4,  compound = 'left', command=quit)
+
+cut_file = Image.open('C:\\Users\\hp\\Pictures\\cut.png')
+resized = cut_file.resize((30, 30))
+check_new5 = ImageTk.PhotoImage(resized)
+
+copy_file = Image.open('C:\\Users\\hp\\Pictures\\copy.png')
+resized = copy_file.resize((30, 30))
+check_new6 = ImageTk.PhotoImage(resized)
+
+paste_file = Image.open('C:\\Users\\hp\\Pictures\\paste.png')
+resized = paste_file.resize((30, 30))
+check_new7 = ImageTk.PhotoImage(resized)
+
+
+editMenu = Menu(menubar, tearoff=0, font=('MV Boli', 15))
+menubar.add_cascade(label='Edit', menu=editMenu)
+editMenu.add_command(label='undo', command=text_area.edit_undo)
+editMenu.add_command(label='redo', command=text_area.edit_redo)
+editMenu.add_command(label='cut', image = check_new5,  compound = 'left', command=cut)
+#editMenu.add_separator()
+editMenu.add_command(label='copy', image = check_new6,  compound = 'left', command=copy)
+#editMenu.add_separator()
+editMenu.add_command(label='paste', image = check_new7,  compound = 'left', command=paste)
+#editMenu.add_separator()
+
+image_file = Image.open('C:\\Users\\hp\\Pictures\\convertpng.png')
+resized = image_file.resize((30, 30))
+check_new9 = ImageTk.PhotoImage(resized)
+
+files_file = Image.open('C:\\Users\\hp\\Pictures\\new.png')
+resized = files_file.resize((30, 30))
+check_new10 = ImageTk.PhotoImage(resized)
+
+convertmenu = Menu(menubar, tearoff=0, font=('MV Boli', 15))
+menubar.add_cascade(label='Convert', menu=convertmenu)
+convertmenu.add_command(label= 'Images',  image = check_new9,  compound = 'left')
+convertmenu.add_command(label= 'Files',  image = check_new10,  compound = 'left')
+
+
+help_file = Image.open('C:\\Users\\hp\\Pictures\\help.png')
+resized = help_file.resize((30, 30))
+check_new8 = ImageTk.PhotoImage(resized)
+
+help_menu = Menu(menubar, tearoff=0, font=('MV Boli', 15))
+menubar.add_cascade(label='Help', menu=help_menu)
+help_menu.add_command(label= 'About',  image = check_new8, command=about,  compound = 'left')
+
+status_bar = Label(frame, text='Ready to save......  ')
+#status_bar.pack(fill=X, side=BOTTOM, ipady=5)
+status_bar.place(relx=.47, rely=.19)
+
+
+#check1 = Image.open('C:\\Users\\hp\\Pictures\\check1.png')
+
+
+#resized = check1.resize((40, 40))
+#check_new = ImageTk.PhotoImage(resized)
+
+#b1 = Button(notes, image = check_new, border = 0, text='save file', command=save_file).place(relx= .87, rely = .02) 
+#.place(x=520, y=9)
+#b1 = Button(notes, width='20', height='2', bg='#fff', text='open file', command=save_file).place(x=300, y=5)
+#notes.grid_rowconfigure(0, weight=1)
+#notes.grid_columnconfigure(0, weight=1)
+
+notepad.mainloop()
